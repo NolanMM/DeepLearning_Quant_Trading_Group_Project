@@ -70,7 +70,7 @@ Install requirements.txt: Automatically installed dependencies that needed for t
 ---
 
 ## II. High Level Design
-![image](assets\High_Level_Design.png)
+![image](assets/High_Level_Design.png)
 
 <details><summary><strong> Details </strong></summary>
 
@@ -105,7 +105,7 @@ Install requirements.txt: Automatically installed dependencies that needed for t
 </details>
 
 ## III. Database Schema
-![image](assets\Star_Schema_NolanM.png)
+![image](assets/Star_Schema_NolanM.png)
 <details><summary><strong> We applying star schema architecture database include </strong></summary>
 
 ### Central Fact Table
