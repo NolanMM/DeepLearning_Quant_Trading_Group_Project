@@ -1,6 +1,4 @@
-from ListSnP500.ListSnP500Collect import ListSAndP500
 from pyspark.sql.types import StructType, StructField, StringType
-from pyspark.sql import SparkSession
 from dotenv import load_dotenv
 import yfinance as yf
 import pandas as pd
@@ -37,11 +35,6 @@ class YahooFinance:
         query (None): A placeholder for the query object 
 
         """
-        self.spark = SparkSession.builder \
-            .appName("Spark_YahooStreaming") \
-            .config("spark.jars.packages") \
-            .getOrCreate()
-
         self.schema = StructType([
             StructField(column_1_name, StringType(), True),
             StructField(column_2_name, StringType(), True),
@@ -49,22 +42,23 @@ class YahooFinance:
             StructField(column_4_name, StringType(), True),
             StructField(column_5_name, StringType(), True),
             StructField(column_6_name, StringType(), True),
-            StructField(column_7_name, StringType(), True),
-            StructField(column_8_name, StringType(), True)
+            StructField(column_7_name, StringType(), True)
+            # StructField(column_8_name, StringType(), True)
         ])
 
         self.symbols = list_of_symbols
         self.interval = '1d'
         self.start = start
         self.end = end
-        self.results = self.process_data()
+        self.results = None
 
     def process_data(self):
         """
         Process the historical stock data for the stock symbols
         """
         data = self.get_data()
-        return self.transform_data(data)
+        self.results = self.transform_data(data)
+        return self.results
 
     def get_data(self):
         """
@@ -108,6 +102,9 @@ class YahooFinance:
         - adjusted_close (float): The adjusted closing price of the stock
 
         """
+        # Convert df into dataframe
+        # df = pd.DataFrame(df)
+
         # Reset the index to turn the MultiIndex into columns
         df = df.reset_index()
 
@@ -126,8 +123,8 @@ class YahooFinance:
                         column_4_name: row[('High', stock)],
                         column_5_name: row[('Low', stock)],
                         column_6_name: row[('Close', stock)],
-                        column_7_name: row[('Volume', stock)],
-                        column_8_name: row[('Adj Close', stock)]
+                        column_7_name: row[('Volume', stock)]
+                        # column_8_name: row[('Adj Close', stock)]
                     }
                     records.append(record)
                 except KeyError as e:

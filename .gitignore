@@ -1,2 +1,5 @@
 myenv
 venv
+.ipynb_checkpoints
+/BatchProcess/DataSource/YahooFinance/.ipynb_checkpoints
+__pycache__
