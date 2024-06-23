@@ -1,0 +1,2 @@
+[console_scripts]
+setup-env = NolanMQuantTradingEnvSetUp.setup:main

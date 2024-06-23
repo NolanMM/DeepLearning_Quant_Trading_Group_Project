@@ -1,0 +1,10 @@
+plotly
+python-dotenv
+streamlit
+pandas
+pyspark
+yfinance
+psycopg2
+kafka-python
+alpha-vantage
+notebook
