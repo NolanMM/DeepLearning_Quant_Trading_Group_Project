@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "nolanmm",
+        "projectKey": "NolanMM_DeepLearning_Quant_Trading_Group_Project"
+    }
+}
