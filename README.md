@@ -56,11 +56,11 @@ The primary objective of this project is to develop and implement a Long Short-T
 Install requirements.txt: Automatically installed dependencies that needed for the project:
   
   ```bash
-    pip install -r requirements.txt
+    pip install NolanMQuantTradingEnvSetUp
   ```
   or
   ```bash
-    pip install streamlit, pyspark, yfinance, psycopg2, python-dotenv
+    pip install -r requirements.txt
   ```
 </p>
 </details>

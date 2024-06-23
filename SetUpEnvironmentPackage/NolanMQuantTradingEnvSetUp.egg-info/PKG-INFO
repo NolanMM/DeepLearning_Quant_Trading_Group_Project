@@ -1,0 +1,12 @@
+Metadata-Version: 2.1
+Name: NolanMQuantTradingEnvSetUp
+Version: 2.0
+Requires-Dist: plotly
+Requires-Dist: python-dotenv
+Requires-Dist: streamlit
+Requires-Dist: pandas
+Requires-Dist: pyspark
+Requires-Dist: yfinance
+Requires-Dist: psycopg2
+Requires-Dist: kafka-python
+Requires-Dist: alpha-vantage
