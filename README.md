@@ -58,6 +58,10 @@ Install requirements.txt: Automatically installed dependencies that needed for t
   ```bash
     pip install -r requirements.txt
   ```
+  or
+  ```bash
+    pip install streamlit, pyspark, yfinance, psycopg2, python-dotenv
+  ```
 </p>
 </details>
 
