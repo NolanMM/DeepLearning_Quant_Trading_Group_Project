@@ -1,6 +1,5 @@
 from Database.PostGreSQLInteraction import DatabaseManager, StockDatabaseManager, TicketDimDatabaseManager, RedditNewsDatabaseManager
 from BatchProcess.DataSource.YahooFinance.YahooFinances_Services import YahooFinance
-from BatchProcess.DataSource.ListSnP500.ListSnP500Collect import ListSAndP500
 from dotenv import load_dotenv
 from datetime import datetime
 import pandas as pd
@@ -92,7 +91,7 @@ class BatchProcessManager:
     def get_stock_data_by_ticker(self, ticker):
         try:
             # Create StockDatabaseManager
-            db_manager = StockDatabaseManager(self.conn)
+            db_manager = StockDatabaseManager()
             # Get data by table
             data = db_manager.get_data_by_table(ticker)
             db_manager.close_connection()
@@ -104,7 +103,7 @@ class BatchProcessManager:
     def get_stock_list_in_database(self):
         try:
             # Create TicketDimDatabaseManager
-            db_manager = TicketDimDatabaseManager(self.conn)
+            db_manager = TicketDimDatabaseManager()
             # Get data
             data = db_manager.get_data()
             db_manager.close_connection()
@@ -115,7 +114,7 @@ class BatchProcessManager:
 
     def get_all_stock_data_in_database(self):
         try:
-            db_manager = StockDatabaseManager(self.conn)
+            db_manager = StockDatabaseManager()
             data = db_manager.fetch_all_data()
             db_manager.close_connection()
             dataframes_list = [value for key, value in data.items()]
