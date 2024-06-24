@@ -5,26 +5,18 @@ from dotenv import load_dotenv
 import os
 
 
-class KafkaSparkConsumerStreaming:
+class KafkaSparkRedditConsumerStreaming:
     def __init__(self):
-        load_dotenv("../.env",override=True)
+        load_dotenv(override=True)
 
         # Load environment variables
         self.kafka_v = os.getenv("KAFKA_VERSION")
         self.kafka_server = os.getenv("KAFKA_SERVER")
-        self.kafka_topic = os.getenv("KAFKA_TOPIC")
-
-        self.column_1_name = os.getenv("COLUMN_1")
-        self.column_2_name = os.getenv("COLUMN_2")
-        self.column_3_name = os.getenv("COLUMN_3")
-
-        self.checkpoint_location = os.getenv("CHECKPOINT_LOCATION")
 
         self.postgres_v = os.getenv("POSTGRES_VERSION")
         self.postgres_url = os.getenv("POSTGRES_URL")
         self.postgres_user = os.getenv("POSTGRES_USER")
         self.postgres_pass = os.getenv("POSTGRES_PASSWORD")
-        self.postgres_table = os.getenv("POSTGRES_TABLE")
         self.format_file = os.getenv("FORMAT_FILE")
         self._mode = os.getenv("MODE")
 
@@ -69,10 +61,12 @@ class KafkaSparkConsumerStreaming:
         value_df = df.selectExpr("CAST(value AS STRING)")
 
         # Convert JSON string to DataFrame
-        json_df = value_df.select(from_json(col("value"), self.schema).alias("data")).select("data.*")
+        json_df = value_df.select(
+            from_json(col("value"), self.schema).alias("data")).select("data.*")
 
         # Convert event_time to timestamp
-        json_df = json_df.withColumn(self.column_3_name, to_timestamp(col(self.column_3_name)))
+        json_df = json_df.withColumn(
+            self.column_3_name, to_timestamp(col(self.column_3_name)))
 
         self.query = json_df.writeStream \
             .foreachBatch(self._write_streaming) \
@@ -90,7 +84,7 @@ class KafkaSparkConsumerStreaming:
 
 # Create an instance of the class and start/stop streaming
 if __name__ == "__main__":
-    kafka_spark_streaming = KafkaSparkConsumerStreaming()
+    kafka_spark_streaming = KafkaSparkRedditConsumerStreaming()
     try:
         kafka_spark_streaming.start_streaming()
     except KeyboardInterrupt:
