@@ -48,7 +48,6 @@ class StockDatabaseManager:
     def insert_data(self, ticker, data):
         table = Table(ticker, self.metadata, autoload_with=self.engine)
 
-        # Ensure all data is treated as string
         data = data.astype(str)
         try:
             with self.engine.connect() as connection:

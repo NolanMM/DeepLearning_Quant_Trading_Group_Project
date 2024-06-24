@@ -23,8 +23,16 @@ st.title("Welcome to the Home Page")
 st.markdown(
     """
         <style>
+            .st-emotion-cache-ocqkz7.e1f1d6gn5{
+            text-align: center;
+            }
+
+            h1{
+                text-align: center;
+            }
+
             .st-emotion-cache-13ln4jf.ea3mdgi5 {
-                max-width: 900px;
+                max-width: 1200px;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -53,6 +61,16 @@ def batch_process_retrieve_data_by_stock(the_stock_in):
     return BatchProcessManager().get_stock_data_by_ticker(the_stock_in)
 
 
+@st.cache_data
+def convert_df_to_csv(df):
+    return df.to_csv().encode("utf-8")
+
+
+@st.cache_data(ttl=1800)
+def batch_process_retrieve_all_data_in_stock_table():
+    return BatchProcessManager().get_all_stock_data_in_database()
+
+
 PROCESS_TIME = 180  # seconds
 _list_of_symbols = retrieve_list_ticket()
 
@@ -61,21 +79,56 @@ _list_of_symbols = retrieve_list_ticket()
 if "stock_data" not in st.session_state:
     st.session_state.stock_data = None
 st.markdown('---')
-st.markdown("### I. Retrieve stock data from database if available")
+st.markdown("### I. Retrieve stock data symbol list")
 
 the_stock = st.selectbox(
-    "Select the stock you want to retrieve from database", _list_of_symbols)
-btn_prepare = st.button("Retrieve stock data from database...")
+    "Select the stock you want to retrieve from database (if available)", _list_of_symbols)
+
+retrieve_col1, retrieve_col2, retrieve_col3 = st.columns(3)
+with retrieve_col1:
+    btn_prepare = st.button("Retrieve stock data from database...")
+
+# Download data by ticket button
+with retrieve_col2:
+    btn_retrieve_data_by_ticket = st.button(
+        "Process File for Ticket Data in Database (csv)")
+
+    if btn_retrieve_data_by_ticket:
+        st.session_state.stock_data = the_stock
+        df = batch_process_retrieve_data_by_stock(the_stock)
+        if df is not None:
+            df = pd.DataFrame(df)
+            csv = convert_df_to_csv(df)
+            st.download_button(
+                label="Download Ticket as CSV",
+                data=csv,
+                file_name=f"Ticket_{the_stock}_data.csv",
+                mime="text/csv",
+            )
+        else:
+            st.error(
+                "No data found for this stock, please update the database first.")
+
+# Download all data in database button
+with retrieve_col3:
+    btn_retrieve_all_data = st.button("Download All Data in Database(csv)")
+    if btn_retrieve_all_data:
+        st.session_state.stock_data = the_stock
+        df = batch_process_retrieve_all_data_in_stock_table()
+        if df is not None:
+            csv = convert_df_to_csv(df)
+            st.download_button(
+                label="Download All Data as CSV",
+                data=csv,
+                file_name="All_Stock_data.csv",
+                mime="text/csv",
+            )
+        else:
+            st.error(
+                "No data found for in database, please update the database first.")
 
 if btn_prepare:
     st.session_state.stock_data = the_stock
-    # df = batch_process_retrieve_data_by_stock(the_stock)
-    # df = pd.DataFrame(df)
-    # if df is not None:
-    #     st.write(df)
-    #     st.write("Done")
-    # else:
-    #     st.write("No data found for this stock, please update the database first.")
 
 st.markdown('---')
 # --- TABS ---
@@ -93,8 +146,8 @@ with List500:
 with Historical_data:
     if st.session_state.stock_data is not None:
         df = batch_process_retrieve_data_by_stock(st.session_state.stock_data)
-        df = pd.DataFrame(df)
         if df is not None:
+            df = pd.DataFrame(df)
             fig = go.Figure(data=[go.Candlestick(x=df['date'],
                                                  open=df['open'],
                                                  high=df['high'],

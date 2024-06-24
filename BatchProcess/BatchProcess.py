@@ -58,7 +58,9 @@ class BatchProcessManager:
 
     def get_stock_data_by_ticker(self, ticker):
         try:
+            # Create StockDatabaseManager
             db_manager = StockDatabaseManager()
+            # Get data by table
             data = db_manager.get_data_by_table(ticker)
             db_manager.close_connection()
             return data
@@ -68,10 +70,28 @@ class BatchProcessManager:
 
     def get_stock_list_in_database(self):
         try:
+            # Create TicketDimDatabaseManager
             db_manager = TicketDimDatabaseManager()
+            # Get data
             data = db_manager.get_data()
             db_manager.close_connection()
             return data
+        except Exception as e:
+            print(e)
+            return None
+
+    def get_all_stock_data_in_database(self):
+        try:
+            db_manager = StockDatabaseManager()
+            data = db_manager.fetch_all_data()
+            db_manager.close_connection()
+            dataframes_list = [value for key, value in data.items()]
+            combined_dataframe = pd.concat(dataframes_list, ignore_index=True)
+            combined_dataframe['date'] = pd.to_datetime(
+                combined_dataframe['date'])
+
+            # Sort the combined dataframe by the 'date' column
+            return combined_dataframe.sort_values(by='date')
         except Exception as e:
             print(e)
             return None
