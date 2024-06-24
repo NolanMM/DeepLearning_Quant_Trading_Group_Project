@@ -9,7 +9,7 @@ create_schema_query = os.getenv("CREATE_SCHEMA_QUERY")
 
 
 class TicketDimDatabaseManager:
-    def __init__(self, con_: psycopg2.extensions.connection):
+    def __init__(self, con_):
         """
         Initialize the database connection
         """

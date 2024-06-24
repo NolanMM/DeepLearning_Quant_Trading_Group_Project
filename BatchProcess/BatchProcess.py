@@ -1,19 +1,52 @@
 from Database.PostGreSQLInteraction import DatabaseManager, StockDatabaseManager, TicketDimDatabaseManager, RedditNewsDatabaseManager
 from BatchProcess.DataSource.YahooFinance.YahooFinances_Services import YahooFinance
 from BatchProcess.DataSource.ListSnP500.ListSnP500Collect import ListSAndP500
+from dotenv import load_dotenv
 from datetime import datetime
 import pandas as pd
-
+import psycopg2
+import os
 
 defaut_start_date = "2014-01-01"
 
 date_to = datetime.now().strftime('%Y-%m-%d')
+
+load_dotenv(override=True)
+
+postgres_server = os.getenv("DATABASE_SERVER")
+postgres_port = os.getenv("DATABASE_PORT")
+postgres_dbname = os.getenv("DATABASE_NAME")
+postgres_user = os.getenv("DATABASE_USER")
+postgres_pass = os.getenv("DATABASE_PASSWORD")
 
 
 class BatchProcessManager:
     def __init__(self):
         self.list_of_symbols = None
         self.dict_ticket = dict()
+        self.dbname = postgres_dbname
+        self.user = postgres_user
+        self.password = postgres_pass
+        self.host = postgres_server
+        self.port = postgres_port
+        self.conn = self.create_connection()
+
+    def create_connection(self):
+        """
+        Create a connection to the database
+        """
+        try:
+            conn = psycopg2.connect(
+                dbname=self.dbname,
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port
+            )
+            return conn
+        except Exception as e:
+            print(e)
+            return None
 
     def run_process(self, list_of_symbols_):
         self.list_of_symbols = list_of_symbols_
@@ -59,7 +92,7 @@ class BatchProcessManager:
     def get_stock_data_by_ticker(self, ticker):
         try:
             # Create StockDatabaseManager
-            db_manager = StockDatabaseManager()
+            db_manager = StockDatabaseManager(self.conn)
             # Get data by table
             data = db_manager.get_data_by_table(ticker)
             db_manager.close_connection()
@@ -71,7 +104,7 @@ class BatchProcessManager:
     def get_stock_list_in_database(self):
         try:
             # Create TicketDimDatabaseManager
-            db_manager = TicketDimDatabaseManager()
+            db_manager = TicketDimDatabaseManager(self.conn)
             # Get data
             data = db_manager.get_data()
             db_manager.close_connection()
@@ -82,7 +115,7 @@ class BatchProcessManager:
 
     def get_all_stock_data_in_database(self):
         try:
-            db_manager = StockDatabaseManager()
+            db_manager = StockDatabaseManager(self.conn)
             data = db_manager.fetch_all_data()
             db_manager.close_connection()
             dataframes_list = [value for key, value in data.items()]
