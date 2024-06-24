@@ -6,14 +6,41 @@ import os
 load_dotenv(override=True)
 
 create_schema_query = os.getenv("CREATE_SCHEMA_QUERY")
+postgres_server = os.getenv("DATABASE_SERVER")
+postgres_port = os.getenv("DATABASE_PORT")
+postgres_dbname = os.getenv("DATABASE_NAME")
+postgres_user = os.getenv("DATABASE_USER")
+postgres_pass = os.getenv("DATABASE_PASSWORD")
 
 
 class StockDatabaseManager:
-    def __init__(self, con_):
+    def __init__(self):
         """
         Initialize the database connection
         """
-        self.conn = con_
+        self.dbname = postgres_dbname
+        self.user = postgres_user
+        self.password = postgres_pass
+        self.host = postgres_server
+        self.port = postgres_port
+        self.conn = self.create_connection()
+
+    def create_connection(self):
+        """
+        Create a connection to the database
+        """
+        try:
+            conn = psycopg2.connect(
+                dbname=self.dbname,
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port
+            )
+            return conn
+        except Exception as e:
+            print(e)
+            return None
 
     def create_schema_and_tables(self, tickers):
         """

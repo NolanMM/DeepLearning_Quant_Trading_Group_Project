@@ -25,9 +25,9 @@ class DatabaseManager:
         self.host = postgres_server
         self.port = postgres_port
         self.conn = self.create_connection()
-        self.StockDatabaseManager = StockDatabaseManager(self.conn)
-        self.TicketDimDatabaseManager = TicketDimDatabaseManager(self.conn)
-        self.RedditNewsDatabaseManager = RedditNewsDatabaseManager(self.conn)
+        self.StockDatabaseManager = StockDatabaseManager()
+        self.TicketDimDatabaseManager = TicketDimDatabaseManager()
+        self.RedditNewsDatabaseManager = RedditNewsDatabaseManager()
 
     def create_connection(self):
         """
