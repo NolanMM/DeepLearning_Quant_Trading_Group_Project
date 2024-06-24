@@ -11,7 +11,7 @@ CREATE_REDDIT_SCHEMA_QUERY = os.getenv("CREATE_REDDIT_SCHEMA_QUERY")
 
 
 class RedditNewsDatabaseManager:
-    def __init__(self, con_: psycopg2.extensions.connection):
+    def __init__(self, con_):
         """
         Initialize the database connection
         """
